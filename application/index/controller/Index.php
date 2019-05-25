@@ -45,7 +45,7 @@ class Index extends Controller
     }
 
     public function sendCache(){
-        Cache::set('string','hello,world,it is ok');
+        Cache::set('string','hello,zhangbin');
 
         return '程序运行成功...';
     }
