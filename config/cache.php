@@ -15,11 +15,13 @@
 
 return [
     // 驱动方式
-    'type'   => 'File',
+    //'type'   => 'File',
+    'type'   => 'Redis',
+    'host'   => '127.0.0.1',
     // 缓存保存目录
     'path'   => '',
     // 缓存前缀
-    'prefix' => '',
+    'prefix' => 'think',
     // 缓存有效期 0表示永久缓存
     'expire' => 0,
 ];

@@ -15,6 +15,10 @@ Route::get('think', function () {
 
 Route::get('hello/:name', 'index/hello');
 
+//实践缓存操作
+Route::get('setCache', 'index/setCache');
+Route::get('getCache', 'index/getCache');
+
 return [
 
 ];
