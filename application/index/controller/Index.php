@@ -44,4 +44,22 @@ class Index extends Controller
         return $name;
     }
 
+    public function sendCache(){
+        Cache::set('string','hello,world,it is ok');
+
+        return '程序运行成功...';
+    }
+    public function acceptCache(){
+        return $this->fetch();
+    }
+    public function showCache(){
+        $string = date('Y-m-d H:i:s');
+        $strCache = Cache::get('string');
+        $this->assign('strCache',$strCache);
+        $this->assign('string',$string);
+        return $this->fetch();
+    }
+
 }
+//$objIndex = new Index();
+//$objIndex->sendCache();

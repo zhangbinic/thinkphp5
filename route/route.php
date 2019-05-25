@@ -18,6 +18,10 @@ Route::get('hello/:name', 'index/hello');
 //实践缓存操作
 Route::get('setCache', 'index/setCache');
 Route::get('getCache', 'index/getCache');
+//ajax缓存练习
+Route::get('sendCache', 'index/sendCache');
+Route::get('acceptCache', 'index/acceptCache');
+Route::get('showCache', 'index/showCache');
 
 return [
 

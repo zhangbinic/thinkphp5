@@ -1,0 +1,42 @@
+<!doctype>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ajax显示缓存</title>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="divSend">程序运行中...</div>
+    <div id="divShow">数据加载中...</div>
+</body>
+<script>
+    $(function(){
+        setInterval(function(){
+            ajaxSendCache();
+            ajaxShowCache();
+        },1000);
+    });
+    function ajaxShowCache(){
+        $.ajax({
+            url:"/showCache",
+            success:function(result){
+                $("#divShow").html(result);
+            }
+        });
+    }
+    function ajaxSendCache(){
+        $.ajax({
+            url:"/sendCache",
+            success:function(result){
+                $("#divSend").html(result);
+            }
+        });
+    }
+</script>
+</html>
