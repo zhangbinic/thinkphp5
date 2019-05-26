@@ -63,11 +63,11 @@ class Index extends Controller
         //$cache->handler()->DECR($prefix.'age');
 
         //通过ajax每次10秒的间隔获取服务器时间，返回到浏览器中
-        $cache->handler()->LPush('LStr',date('H:i:s'));
+        //$cache->handler()->LPush('LStr',date('H:i:s'));
         //$cache->handler()->RPush('LStr',date('Y-m-d H:i:s'));
 
         //集合的存储
-        $cache->handler()->SAdd('SStr',date('H:i:s'));
+        //$cache->handler()->SAdd('SStr',date('H:i:s'));
         
         return '程序运行成功...';
     }
