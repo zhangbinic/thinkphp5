@@ -4,3 +4,12 @@
 <h2>
     {$strCache}
 </h2>
+
+<ul class="pagination">
+	{foreach $arrLStr as $k=>$str}
+  		<li class="page-item {if $k==5}active{/if}"><a class="page-link" href="#">{$str}</a></li>
+  	{/foreach}
+</ul>
+
+<p class="text-primary">{$strFirst}</p>
+<p class="text-primary">{$strLast}</p>

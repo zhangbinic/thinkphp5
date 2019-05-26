@@ -1,7 +1,7 @@
 <?php
 namespace app\index\controller;
 
-//use think\cache\driver\Redis;
+use think\cache\driver\Redis;
 use think\Controller;
 use think\facade\Cache;
 
@@ -39,41 +39,66 @@ class Index extends Controller
      * @return mixed
      */
     public function getCache(){
+        $prefix = config('cache.prefix');
         //$name = Cache::get('name135');
+        //list
         //$name = Cache::init()->handler()->LRANGE('hello',0,1);
         //$name = Cache::init()->handler()->LPop('hello');
-        //$cache = Cache::init();
-        //$handler = $cache->handler();
-        //$name = $handler->StrLen('name135');
-        $objRedis = new Redis();
-        $name = $objRedis->Get('name135');
-        //$name = $handler->Get('name135');
-        //$name = $handler->LPop('hello');
+        $cache = Cache::init();
+        $handler = $cache->handler();
+        $name = $handler->StrLen($prefix.'name135');
+        $name = $handler->Get($prefix.'name135');
         halt($name);
-
         return $name;
     }
 
     public function sendCache(){
-        Cache::set('string','hello,zhangbin');
-
-        
-
-        Cache::set('age',18);
         $cache = Cache::init();
-        $cache->handler()->DECR('age');
-        
+        $prefix = config('cache.prefix');
 
+        //Cache::set('string','hello,zhangbin');
+        //Cache::set('age',18);
+
+        //调用redis的扩展方法
+        //$cache->handler()->DECR($prefix.'age');
+
+        //通过ajax每次10秒的间隔获取服务器时间，返回到浏览器中
+        $cache->handler()->LPush('LStr',date('H:i:s'));
+        //$cache->handler()->RPush('LStr',date('Y-m-d H:i:s'));
+        
         return '程序运行成功...';
     }
     public function acceptCache(){
         return $this->fetch();
     }
     public function showCache(){
+        $cache = Cache::init();
+
+        //保留指定范围的队列数据，删除范围之外的所有数据
+        $cache->handler()->LTrim('LStr',0,10);
+        
+        //获取从左到右的队列数据
+        $arrLStr = $cache->handler()->LRange('LStr',0,10);
+        //获取从右到左的10条队列数据
+        //$arrLStr = $cache->handler()->LRange('LStr',-10,-1);
+        //返回左边第一个元素值
+        //$strFirst = $cache->handler()->LPop('LStr');
+        //返回右边第一个元素值
+        //$strLast = $cache->handler()->RPop('LStr');
+        //$strLast = array_pop($arrLStr);
+
+        //获取列表长度
+        $strLen = $cache->handler()->LLen('LStr');
+        
+        //模板输出队列数据
+        $this->assign('arrLStr',$arrLStr);
+        $this->assign('strFirst',$strFirst='');
+        $this->assign('strLast',$strLast='');
+
         $string = date('Y-m-d H:i:s');
         $strCache = Cache::get('string');
         $strCache = Cache::get('age');
-        $this->assign('strCache',$strCache);
+        $this->assign('strCache',$strLen);
         $this->assign('string',$string);
         return $this->fetch();
     }
