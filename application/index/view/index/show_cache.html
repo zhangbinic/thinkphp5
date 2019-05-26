@@ -1,5 +1,5 @@
 <h1>
-    {$string}
+    队列操作
 </h1>
 <h2>
     {$strCache}
@@ -13,3 +13,17 @@
 
 <p class="text-primary">{$strFirst}</p>
 <p class="text-primary">{$strLast}</p>
+
+<h1>集合操作</h1>
+<h2>{$strSLen}</h2>
+<ul class="pagination">
+	{foreach $arrSStr as $k=>$str}
+  		<li class="page-item {if $k==5}active{/if}"><a class="page-link" href="#">{$str}</a></li>
+  	{/foreach}
+</ul>
+
+<div class="progress">
+
+<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width:{$strSLen}%"></div>
+
+</div>

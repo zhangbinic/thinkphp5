@@ -65,6 +65,9 @@ class Index extends Controller
         //通过ajax每次10秒的间隔获取服务器时间，返回到浏览器中
         $cache->handler()->LPush('LStr',date('H:i:s'));
         //$cache->handler()->RPush('LStr',date('Y-m-d H:i:s'));
+
+        //集合的存储
+        $cache->handler()->SAdd('SStr',date('H:i:s'));
         
         return '程序运行成功...';
     }
@@ -94,6 +97,16 @@ class Index extends Controller
         $this->assign('arrLStr',$arrLStr);
         $this->assign('strFirst',$strFirst='');
         $this->assign('strLast',$strLast='');
+
+        //集合
+        $arrSStr = $cache->handler()->SMembers('SStr');
+        //删除指定个数的数据
+        //$cache->handler()->SPop('SStr',100);
+        $arrSStr = $cache->handler()->SRandMember('SStr',11);
+        $this->assign('arrSStr',$arrSStr);
+
+        $strSLen = $cache->handler()->SCard('SStr');
+        $this->assign('strSLen',$strSLen);
 
         $string = date('Y-m-d H:i:s');
         $strCache = Cache::get('string');
