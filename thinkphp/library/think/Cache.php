@@ -130,4 +130,8 @@ class Cache
         return call_user_func_array([$this->init(), $method], $args);
     }
 
+    public static function getHandler0(){
+        self::init();
+        return self::$this->handler;
+    }
 }

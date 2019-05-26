@@ -1,7 +1,7 @@
 <?php
 namespace app\index\controller;
 
-use think\cache\driver\Redis;
+//use think\cache\driver\Redis;
 use think\Controller;
 use think\facade\Cache;
 
@@ -28,6 +28,7 @@ class Index extends Controller
         $handler = $cache->handler();
         // 获取Redis对象 进行额外方法调用
         $len = $handler->StrLen('name135');
+        //halt($len);
         //list
         $handler->LPUSH('hello','beyond is very good brand');
         return 'hello,' . $value;
@@ -38,14 +39,30 @@ class Index extends Controller
      * @return mixed
      */
     public function getCache(){
-        $name = Cache::get('name135');
-        $name = Cache::init()->handler()->LRANGE('hello',0,1);
+        //$name = Cache::get('name135');
+        //$name = Cache::init()->handler()->LRANGE('hello',0,1);
+        //$name = Cache::init()->handler()->LPop('hello');
+        //$cache = Cache::init();
+        //$handler = $cache->handler();
+        //$name = $handler->StrLen('name135');
+        $objRedis = new Redis();
+        $name = $objRedis->Get('name135');
+        //$name = $handler->Get('name135');
+        //$name = $handler->LPop('hello');
         halt($name);
+
         return $name;
     }
 
     public function sendCache(){
         Cache::set('string','hello,zhangbin');
+
+        
+
+        Cache::set('age',18);
+        $cache = Cache::init();
+        $cache->handler()->DECR('age');
+        
 
         return '程序运行成功...';
     }
@@ -55,6 +72,7 @@ class Index extends Controller
     public function showCache(){
         $string = date('Y-m-d H:i:s');
         $strCache = Cache::get('string');
+        $strCache = Cache::get('age');
         $this->assign('strCache',$strCache);
         $this->assign('string',$string);
         return $this->fetch();
