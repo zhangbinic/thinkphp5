@@ -177,6 +177,32 @@ class Index extends Controller
         return $this->fetch();
     }
 
+    public function pageList(){
+        $domain = 'http://www.900.com';
+        $url = $domain.'/html/part/20.html';
+        $content = file_get_contents($url);
+        //$content = htmlspecialchars($content);
+        preg_match_all('/<a href="(.*)" title="(.*)">(.*)<\/a>/',$content,$match);
+        $arrUrl = array_combine($match[1],$match[3]);
+        foreach($arrUrl as $k=>$v){
+            $arrUrlData[$domain.$k] = iconv('GBK','UTF-8',$v);
+        }
+        halt($arrUrlData);
+    }
+
+    public function pageShow(){
+        $url = 'http://www.900.com/html/article/808305.html';
+        $content = file_get_contents($url);
+        preg_match_all('/<img src="(.*.jpg)"/',$content,$match);
+        //halt($match);
+        //$fileName = 'https://img6.26ts.com/2019/01-16/o4d2soc1gzr.jpg';
+        foreach($match[1] as $fileName){
+            $arrFileName = pathinfo($fileName);
+            //halt($arrFileName);
+            file_put_contents($arrFileName['basename'],file_get_contents($fileName));
+        }
+    }
+
 }
 //$objIndex = new Index();
 //$objIndex->sendCache();

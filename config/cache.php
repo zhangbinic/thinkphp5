@@ -15,9 +15,9 @@
 
 return [
     // 驱动方式
-    //'type'   => 'File',
-    'type'   => 'Redis',
-    'host'   => '127.0.0.1',
+    'type'   => 'File',
+    //'type'   => 'Redis',
+    //'host'   => '127.0.0.1',
     // 缓存保存目录
     'path'   => '',
     // 缓存前缀
