@@ -30,6 +30,8 @@ Route::get('showCache', 'index/showCache');
 Route::get('pageFor','index/pageFor');
 Route::get('pageShow','index/pageShow');
 
+Route::get('simhash','index/testSimhash');
+
 return [
 
 ];

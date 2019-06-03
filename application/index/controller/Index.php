@@ -239,6 +239,14 @@ class Index extends Controller
         }
     }
 
+    /**
+     * 找不到gmp的数学函数库
+     */
+    public function testSimhash(){
+        $obj = new \my\Simhash();
+        dump($obj);
+    }
+
 }
 //$objIndex = new Index();
 //$objIndex->sendCache();
