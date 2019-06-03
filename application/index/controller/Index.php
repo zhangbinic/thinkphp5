@@ -22,6 +22,8 @@ class Index extends Controller
         //公共函数测试
         //test();
 
+
+
         //string
         $value = 'zhangbin135';
         Cache::set('name135',$value,3600);
@@ -32,6 +34,22 @@ class Index extends Controller
         // 获取Redis对象 进行额外方法调用
         $len = $handler->StrLen('name135');
         //halt($len);
+
+        $arrSStr = $cache->handler()->SMembers('SetTest');
+        $sql = "insert into pageList(`url`,`title`,`time`) values ";
+        foreach($arrSStr as $str){
+            $str = json_decode($str,true);
+            //dump($str);
+            foreach($str as $k=>$v){
+                $time = date('Y-m-d H:i:s');
+                $sql .= "('{$k}','{$v}','{$time}'),";
+                $this->pageShow($k);
+            }
+        }
+        $sql = trim($sql,',').';';
+        echo $sql;die;
+        halt($arrSStr);
+
         //list
         $handler->LPUSH('hello','beyond is very good brand');
 
@@ -177,21 +195,39 @@ class Index extends Controller
         return $this->fetch();
     }
 
-    public function pageList(){
+    public function pageFor(){
+        set_time_limit(9999);
+        $redis = New \Redis();
+        $conn = $redis->connect('localhost','6379');
+        $pipe = $redis->multi(\Redis::PIPELINE);
+        
         $domain = 'http://www.900.com';
-        $url = $domain.'/html/part/20.html';
+        //$url = $domain.'/html/part/20_682.html';
+        for($i=3;$i<=6;$i++){
+            if($i==1){
+                $url = $domain.'/html/part/20.html';
+            }else{
+                $url = $domain.'/html/part/20_'.$i.'.html';
+            }
+            $arrUrlData = $this->pageList($url,$domain);
+            $pipe->SAdd('SetTest',json_encode($arrUrlData));
+        }
+        $pipe->exec();
+        halt('success');
+    }
+
+    public function pageList($url,$domain){
         $content = file_get_contents($url);
-        //$content = htmlspecialchars($content);
         preg_match_all('/<a href="(.*)" title="(.*)">(.*)<\/a>/',$content,$match);
         $arrUrl = array_combine($match[1],$match[3]);
         foreach($arrUrl as $k=>$v){
             $arrUrlData[$domain.$k] = iconv('GBK','UTF-8',$v);
         }
-        halt($arrUrlData);
+        return ($arrUrlData);
     }
 
-    public function pageShow(){
-        $url = 'http://www.900.com/html/article/808305.html';
+    public function pageShow($url){
+        //$url = 'http://www.900.com/html/article/808305.html';
         $content = file_get_contents($url);
         preg_match_all('/<img src="(.*.jpg)"/',$content,$match);
         //halt($match);
@@ -199,7 +235,7 @@ class Index extends Controller
         foreach($match[1] as $fileName){
             $arrFileName = pathinfo($fileName);
             //halt($arrFileName);
-            file_put_contents($arrFileName['basename'],file_get_contents($fileName));
+            file_put_contents('1/'.$arrFileName['basename'],file_get_contents($fileName));
         }
     }
 

@@ -27,7 +27,7 @@ Route::get('sendCache', 'index/sendCache');
 Route::get('acceptCache', 'index/acceptCache');
 Route::get('showCache', 'index/showCache');
 //抓取网页信息
-Route::get('pageList','index/pageList');
+Route::get('pageFor','index/pageFor');
 Route::get('pageShow','index/pageShow');
 
 return [
