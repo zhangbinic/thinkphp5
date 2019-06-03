@@ -19,6 +19,9 @@ class Index extends Controller
      */
     public function setCache($name = 'ThinkPHP5')
     {
+        //公共函数测试
+        //test();
+
         //string
         $value = 'zhangbin135';
         Cache::set('name135',$value,3600);
@@ -31,6 +34,40 @@ class Index extends Controller
         //halt($len);
         //list
         $handler->LPUSH('hello','beyond is very good brand');
+
+        //$cache->handler()->ZAdd('ZSet2','1 Book1 2 Book2 3 Book3');
+        $cache->handler()->ZAdd('ZSet2',1,'Book1');
+        $cache->handler()->ZAdd('ZSet2',2,'Book2');
+        $cache->handler()->ZAdd('ZSet2',3,'Book3');
+
+        //$cache->handler()->ZAdd('ZSet3','2 Book1 2 Book2 4 Book4');
+        $cache->handler()->ZAdd('ZSet3',2,'Book1');
+        $cache->handler()->ZAdd('ZSet3',2,'Book2');
+        $cache->handler()->ZAdd('ZSet3',4,'Book4');
+
+        //$a = $cache->handler()->ZRange('ZSet2',0,-1);
+        //halt($a);
+        $cache->handler()->ZUnionStore(
+            'ZEnd0',
+            array('ZSet2','ZSet3'),
+            array(1,2)
+        );
+        //weights参数表示权重，其中表示并集后 zset1集合的分 * 2 后存储到 zset3 集合， zset2集合的分 * 1 后存储到 zset3 集合，这个代码的weihgts是错误的，经过测试。
+        //$redis->zunionstore('zset3', array('zset1', 'zset2'), array('weights' => array(2, 1)));
+
+        $cache->handler()->ZInterStore('ZEnd1',array('ZSet2','ZSet3'),array(1,2));
+
+
+        $arrZEnd = $cache->handler()->ZRange('ZEnd0',0,-1,'WithScores');
+        $arrZEnd = $cache->handler()->ZRange('ZEnd1',0,-1,'WithScores');
+
+        $cache->handler()->Publish('ChatChannel1','在家么');
+
+        $arrConfig = $cache->handler()->Config('get','*');
+        halt($arrConfig);
+
+        halt($arrZEnd);
+
         return 'hello,' . $value;
     }
 
@@ -39,6 +76,8 @@ class Index extends Controller
      * @return mixed
      */
     public function getCache(){
+        //echo 1;die;
+
         $prefix = config('cache.prefix');
         //$name = Cache::get('name135');
         //list
@@ -48,6 +87,19 @@ class Index extends Controller
         $handler = $cache->handler();
         $name = $handler->StrLen($prefix.'name135');
         $name = $handler->Get($prefix.'name135');
+        //显示客户端的连接信息列表
+        $name = $handler->Client('List');
+        //获取客户端连接名称
+        $name = $handler->Client('SetName','Conn2');
+        $name = $handler->Client('GetName');
+
+        $name = $handler->Client('List');
+        //$name = $handler->Command();
+        $name = $handler->Keys('*');
+
+        $arrSStr = $cache->handler()->SMembers('SetAdd');
+        halt($arrSStr);
+
         halt($name);
         return $name;
     }
@@ -68,6 +120,11 @@ class Index extends Controller
 
         //集合的存储
         //$cache->handler()->SAdd('SStr',date('H:i:s'));
+
+        //有序集合
+        $cache->handler()->ZAdd('ZSet2','1 Book1 2 Book2 3 Book3');
+        $cache->handler()->ZAdd('ZSet3','2 Book1 2 Book2 4 Book4');
+        $cache->handler()->ZUnionStore('ZEnd0',2,'ZSet2 ZSet3 WEIGHTS 1 2');
         
         return '程序运行成功...';
     }
@@ -100,6 +157,7 @@ class Index extends Controller
 
         //集合
         $arrSStr = $cache->handler()->SMembers('SStr');
+
         //删除指定个数的数据
         //$cache->handler()->SPop('SStr',100);
         $arrSStr = $cache->handler()->SRandMember('SStr',11);
@@ -107,6 +165,9 @@ class Index extends Controller
 
         $strSLen = $cache->handler()->SCard('SStr');
         $this->assign('strSLen',$strSLen);
+
+        //有序集合
+        $arrZEnd = $cache->handler()->ZRange('ZEnd0',0,-1,'WithScores');
 
         $string = date('Y-m-d H:i:s');
         $strCache = Cache::get('string');
