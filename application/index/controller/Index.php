@@ -4,6 +4,7 @@ namespace app\index\controller;
 use think\cache\driver\Redis;
 use think\Controller;
 use think\facade\Cache;
+use think\facade\Debug;
 
 class Index extends Controller
 {
@@ -247,6 +248,133 @@ class Index extends Controller
         dump($obj);
     }
 
+    /**
+     * 性能测试开始
+     */
+    private function beginTime(){
+        Debug::remark('begin');
+    }
+    private function endTime(){
+        Debug::remark('end');
+        echo Debug::getRangeTime('begin','end').'秒';
+    }
+    private function redisHandler(){
+        //redis操作
+        $cache = Cache::init();
+        $handler = $cache->handler();
+        return $handler;
+    }
+
+    /**
+     * 一次性给redis 队列 写入1000万的数据，崩溃了，提示了504
+     * 需要使用redis的管道技术写入
+     */
+    public function createArray(){
+        $this->beginTime();
+        $handler = $this->redisHandler();
+        $pipe = $handler->multi(\Redis::PIPELINE);
+        //$handler->RPUSH('createArray',1);
+        for($i=1;$i<=1000000;$i++){
+            $pipe->RPUSH('createArray',$i);
+        }
+        $pipe->exec();
+        $this->endTime();
+    }
+
+    public function getArray(){
+        //$this->beginTime();
+        $handler = $this->redisHandler();
+        $LArray = $handler->LRange('createArray',0,-1);
+        //dump($LArray);
+        //$this->endTime();
+        return ($LArray);
+    }
+
+    /**
+     * 线性查找
+     * 查找了9998次，才找到9999
+     * 线性时间
+     */
+    public function findValue1(){
+        //$microTime = microtime();
+        //$arrMicroTime = explode(' ',$microTime);
+        //$beginT = $arrMicroTime[1] + $arrMicroTime[0];
+        //halt($arrMicroTime);
+        $this->beginTime();
+        $LArray = $this->getArray();
+        $number = 99;
+        $i = 0;
+        foreach($LArray as $v){
+            if($v==$number){
+                echo '终于找到了这个数字：'.$number;
+                echo '<br>';
+                echo '一共查找了'.$i.'次<br>';
+                //$microTime = microtime();
+                //$arrMicroTime = explode(' ',$microTime);
+                //$endT = $arrMicroTime[1] + $arrMicroTime[0];
+                //$diffT = $endT - $beginT;
+                //echo $diffT;
+                $this->endTime();
+                exit;
+            }else{
+                //echo PHP_EOL;
+                //echo '不是这个数字哦=>'.$v;
+                //echo '<br>';
+                $i++;
+            }
+        }
+    }
+
+    /**
+     * 二分法查找，高效
+     * 对数时间
+     */
+    public function binarySearch(){
+        $this->beginTime();
+        $LArray = $this->getArray();
+
+        //in_array函数，跟二分法差不多的时间
+        /*if(in_array(999999,$LArray)){
+            echo '';
+            $this->endTime();die;
+        }*/
+
+        $number = 99;
+        $i = 0;
+        $len = count($LArray);
+        //数组下标
+        $low = 0;
+        $high = $len - 1;
+        while($low<=$high){
+            $mid = ceil(($low+$high)/2);
+            $guess = $LArray[$mid];
+            //halt($guess);
+            if($guess==$number){
+                echo '终于找到了这个数字：'.$number;
+                echo '<br>';
+                echo '一共查找了'.$i.'次<br>';
+                $this->endTime();
+                exit;
+            }elseif($guess>$number){
+                $high = $mid - 1;
+                $i++;
+                //halt($i);
+            }else{
+                $low = $mid + 1;
+                $i++;
+            }
+        }
+    }
+
+    /**
+     * 计算log8的查找次数，支持传递URL参数：/logCal/number/8
+     */
+    public function logCal(){
+        //php7的合并运算符
+        $number = $_GET['number']??8;
+        $count = log($number,2);
+        echo $count;
+    }
 }
 //$objIndex = new Index();
 //$objIndex->sendCache();

@@ -17,7 +17,7 @@ Route::get('think', function () {
     return 'hello,ThinkPHP5!';
 });
 
-Route::get('hello/:name', 'index/hello');
+//Route::get('hello/:name', 'index/hello');
 
 //实践缓存操作
 Route::get('setCache', 'index/setCache');
@@ -31,6 +31,13 @@ Route::get('pageFor','index/pageFor');
 Route::get('pageShow','index/pageShow');
 
 Route::get('simhash','index/testSimhash');
+
+//生成1万个数值的一维数组
+Route::get('createArray','index/createArray');
+Route::get('getArray','index/getArray');
+Route::get('findValue1','index/findValue1');
+Route::get('binarySearch','index/binarySearch');
+Route::get('logCal','index/logCal');
 
 return [
 

@@ -21,7 +21,7 @@ return [
     // 应用调试模式
     'app_debug'              => true,//调试模式打开
     // 应用Trace
-    'app_trace'              => true,//显示底部调试信息
+    'app_trace'              => false,//显示底部调试信息
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
