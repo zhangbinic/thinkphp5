@@ -39,6 +39,8 @@ Route::get('findValue1','index/findValue1');
 Route::get('binarySearch','index/binarySearch');
 Route::get('logCal','index/logCal');
 
+Route::get('index','Redis/index');
+
 return [
 
 ];
