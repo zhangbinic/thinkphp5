@@ -9,10 +9,10 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // http://tp.php.zhangbin.work/acceptCache
-Route::get('/', function () {
+/*Route::get('/', function () {
     return 'ThinkPHP 5.1.37';
-});
-
+});*/
+Route::get('/', 'index/content');
 Route::get('think', function () {
     return 'hello,ThinkPHP5!';
 });
